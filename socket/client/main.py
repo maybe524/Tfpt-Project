@@ -4,27 +4,7 @@ import sys, os
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyQt5.QtWidgets import QWidget, \
-        QPushButton, \
-        QToolTip, \
-        QMessageBox, \
-        QApplication, \
-        QDesktopWidget, \
-        QMainWindow, \
-        QAction, \
-        qApp, \
-        QVBoxLayout, \
-        QHBoxLayout, \
-        QTextBrowser, \
-        QLineEdit, \
-        QLabel, \
-        QInputDialog, QDialog, QTableWidget, QTableWidgetItem, QAbstractItemView, QFrame, QProgressBar, \
-        QTreeWidget, QTreeWidgetItem, QMenu, \
-        QDirModel, QListView, QTreeView, \
-        QTableView, QSplitter, QTabWidget
-
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtWidgets import *
 
 import threading
 from time import sleep
@@ -40,7 +20,7 @@ clientDebug = print
 tftpSql = None
 loginIsSuccess = False
 windownName = 'FTFP Super Tools'
-defaultLocalDir = '/tmp/'
+defaultLocalDir = '/tmp'
 defaultDirName = 'tftpDisk_'
 
 class userInfos:
@@ -322,7 +302,14 @@ class MyMainWidget(QMainWindow):
         # 将fileTree部件设置为该窗口的核心框架
         self.setCentralWidget(self.fileTree)
 
-        model = QDirModel()
+        # model = QDirModel()
+        self.userLocalDir = defaultLocalDir + '/' + defaultDirName + self.userInfosObject.name
+        clientDebug('userLocalDir: ', self.userLocalDir)
+        if not os.path.exists(self.userLocalDir):
+            os.mkdir(self.userLocalDir)
+
+        model = QFileSystemModel()
+        model.setRootPath(QDir.currentPath())
         selModel = QItemSelectionModel(model)
         self.dirTree = QTreeView()
         self.dirTree.setModel(model)
@@ -331,13 +318,7 @@ class MyMainWidget(QMainWindow):
         self.dirTree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.dirTree.resizeColumnToContents(0)
         self.dirTree.setSortingEnabled(True)
-
-        self.userLocalDir = defaultLocalDir + '/' + defaultDirName + self.userInfosObject.name
-        clientDebug('userLocalDir: ', self.userLocalDir)
-        if not os.path.exists(self.userLocalDir):
-            os.mkdir(self.userLocalDir)
-
-        self.dirTree.setRootIndex(model.index(self.userLocalDir))
+        # self.dirTree.setRootIndex(model.index(self.userLocalDir))
 
         self.fileTable = QTableWidget(0, 5)
         # self.fileTable.setModel(model)
