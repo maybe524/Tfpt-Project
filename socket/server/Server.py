@@ -12,6 +12,9 @@ from get import do_get
 from put import do_put
 from mkdir import do_mkdir
 from rename import do_rename
+import os, sys
+
+from conf import *
 
 timeout = 60     # 设置超时时间变量 
 
@@ -82,8 +85,20 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     def rm(self, *args):
         do_rm(self, *args)
 
+'''
+Add for do prepare work befor server is start up!
+Huangxiaowen
+2018.6.16
+'''
+def serverPrepare():
+    if not os.path.exists(PATH_):
+        os.mkdir(PATH_)
+
 if __name__ == "__main__":
     HOST, PORT = "0.0.0.0", 8889
+
+    serverPrepare()
+
     server = socketserver.ThreadingTCPServer((HOST, PORT), MyTCPHandler)   #线程
     server.serve_forever()
 

@@ -62,12 +62,12 @@ class loginWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # statusBar设置
-        self.statusBar().showMessage('准备就绪')
+        self.statusBar().showMessage('All ready')
 
         # 退出Action设置
         exitAction = QAction(QIcon('1.png'), '&Exit', self)
         exitAction.setShortcut('ctrl+Q')
-        exitAction.setStatusTip('退出应用程序')
+        exitAction.setStatusTip('Exit app')
         exitAction.triggered.connect(qApp.quit)     # qApp就相当于QCoreApplication.instance()
 
         # menuBar设置
@@ -81,29 +81,29 @@ class loginWindow(QMainWindow):
 
         # 确认PushButton设置
         self.btnOK = QPushButton("LogIn")
-        self.btnOK.setToolTip("点击此按钮将确认改变！")
+        self.btnOK.setToolTip("confirm to all right!")
         self.btnOK.setStatusTip("Click to login...")
         self.btnOK.clicked.connect(self.funLogin)
         self.btnOK.resize(self.btnOK.sizeHint())
 
         # 取消PushButton设置
         btnCancel = QPushButton("Clear")
-        btnCancel.setToolTip("点击此按钮将放弃改变！")
-        btnCancel.setStatusTip("点击此按钮将放弃改变！")
+        btnCancel.setToolTip("Click to change!")
+        btnCancel.setStatusTip("Click to give up!")
         btnCancel.clicked.connect(self.funCancel)
         btnCancel.resize(btnCancel.sizeHint())
 
         # 退出PushButton设置
-        btnQuit = QPushButton('退出')
-        btnQuit.setToolTip("点击此按钮将退出应用程序！")
-        btnQuit.setStatusTip("点击此按钮将退出应用程序！")
+        btnQuit = QPushButton('Quit')
+        btnQuit.setToolTip("Click to quit！")
+        btnQuit.setStatusTip("Click to quit App")
         btnQuit.clicked.connect(qApp.quit)
         btnQuit.resize(btnQuit.sizeHint())
 
         # 更改提示PushButton设置
         btnRegister = QPushButton('Register')
-        btnRegister.setToolTip("点击此按钮将更改提示符！")
-        btnRegister.setStatusTip("点击此按钮将更改提示符！")
+        btnRegister.setToolTip("Click to register!")
+        btnRegister.setStatusTip("Click to change!")
         btnRegister.clicked.connect(self.funRegister)
         btnRegister.resize(btnRegister.sizeHint())
 
@@ -288,7 +288,7 @@ class MyMainWidget(QMainWindow):
         # 退出Action设置
         exitAction = QAction(QIcon('1.png'), '&Exit', self)
         exitAction.setShortcut('ctrl+Q')
-        exitAction.setStatusTip('退出应用程序')
+        exitAction.setStatusTip('Exit app')
         exitAction.triggered.connect(qApp.quit)     # qApp就相当于QCoreApplication.instance()
 
         # menuBar设置
@@ -312,7 +312,9 @@ class MyMainWidget(QMainWindow):
         self.fileTree.itemSelectionChanged.connect(self.myItemSelectionChanged)
         self.fileTree.customContextMenuRequested[QPoint].connect(self.myOneItemMenu)
         self.fileTree.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.fileTree.resizeColumnToContents(0)
+        self.fileTree.resizeColumnToContents(1)
+        self.fileTree.setSortingEnabled(True)
+        # self.fileTree.setHeaderLabel('Remote Disk')
 
         # 设置root为self.fileTree的子树，所以root就是跟节点
         self.root = QTreeWidgetItem(self.fileTree)
@@ -327,6 +329,8 @@ class MyMainWidget(QMainWindow):
         self.dirTree.setSelectionModel(selModel)
         self.dirTree.customContextMenuRequested[QPoint].connect(self.myDirItemMenu)
         self.dirTree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.dirTree.resizeColumnToContents(0)
+        self.dirTree.setSortingEnabled(True)
 
         self.userLocalDir = defaultLocalDir + '/' + defaultDirName + self.userInfosObject.name
         clientDebug('userLocalDir: ', self.userLocalDir)
@@ -435,13 +439,18 @@ class MyMainWidget(QMainWindow):
         self.tabWidget.show()
 
     def myOneItemMenu(self, point):
-        clientDebug('point = ', point)
-        popMenu = QMenu()
-        popMenu.addAction(QAction('Extend', self, triggered=self.mySelectExtend))
-        popMenu.addAction(QAction('Download', self, triggered=self.mySelectDownload))
-        popMenu.addAction(QAction('Delete', self, triggered=self.mySelectDelete))
-        popMenu.addAction(QAction('Rename', self, triggered=self.mySelectRename))
-        popMenu.exec_(QCursor.pos())
+        getSelected = self.fileTree.selectedItems()
+        if getSelected:
+            baseNode = getSelected[0]
+            fileType = baseNode.text(2)
+            clientDebug('point = ', point)
+            popMenu = QMenu()
+            if 'folder' == fileType:
+                popMenu.addAction(QAction('Extend', self, triggered=self.mySelectExtend))
+            popMenu.addAction(QAction('Download', self, triggered=self.mySelectDownload))
+            popMenu.addAction(QAction('Delete', self, triggered=self.mySelectDelete))
+            popMenu.addAction(QAction('Rename', self, triggered=self.mySelectRename))
+            popMenu.exec_(QCursor.pos())
 
     def myDirItemMenu(self, point):
         popMenu = QMenu()
@@ -500,15 +509,9 @@ class MyMainWidget(QMainWindow):
         getSelected = self.fileTree.selectedItems()
         if getSelected:
             baseNode = getSelected[0]
-            getChildNode = baseNode.text(0)
-
-            # print('Select to extend: ', getChildNode)
-            # fileLs = "cd %s" % getChildNode
-            # print(fileLs)
-
-            # filels = ftp_client.cd(fileLs)
-            # item = ['Child8', 'D', 'F', '2018']#ls
-            # item = [filels]  #ls
+            fileType = baseNode.text(2)
+            if 'folder' != fileType:
+                return
 
             fullPath = ''
             listPath = []
@@ -534,20 +537,38 @@ class MyMainWidget(QMainWindow):
         return
 
     def mySelectDelete(self):
+        isDeleteOK = False
         getSelected = self.fileTree.selectedItems()
         if getSelected:
             baseNode = getSelected[0]
             getChildNode = baseNode.text(0)
-            print('Select to Delete: ', getChildNode)
+            clientDebug('Select to Delete: ', getChildNode)
             fileLs = "rm %s" % getChildNode
-            filels = ftp_client.rm(fileLs)
+            reply = QMessageBox.warning(self,
+                                        "Warning",
+                                        "Do you want to delete file '%s'?" % getChildNode,
+                                        QMessageBox.Yes | QMessageBox.No)
+            clientDebug('reply = ', reply)
+            if reply == 16384:          # QMessageBox.Yes value is 16384
+                ret = ftp_client.rm(fileLs)
+                clientDebug('ftp_client.rm ret: ', ret)
+                if ret:
+                    parentNode = baseNode.parent()
+                    ret = parentNode.takeChild(parentNode.indexOfChild(baseNode))
+                    clientDebug('takeChild ret: ', ret)
+        return isDeleteOK
 
     def mySelectRename(self):
         getSelected = self.fileTree.selectedItems()
+        print('sadf: ', getSelected)
         if getSelected:
             baseNode = getSelected[0]
             getChildNode = baseNode.text(0)
-            print('Select to Rename: ', getChildNode)
+            clientDebug('Select to Rename: ', getChildNode)
+            value, ok = QInputDialog.getText(self, 'Rename', 'Edite new name:', QLineEdit.Normal, getChildNode)
+            clientDebug(value, ok)
+            if ok:
+                baseNode.setText(0, value)
 
     def myUpdataOneItems(self, childRoot, childList):
         if not childRoot or not childList:
@@ -556,7 +577,7 @@ class MyMainWidget(QMainWindow):
         newChild = None
         for item in childList:
             newChild = QTreeWidgetItem(childRoot)
-            print('newChild: ', type(newChild))
+            clientDebug('newChild: ', type(newChild))
             for i in range(0, self.rowNum):
                 newChild.setText(i, item[i])
         return
@@ -622,7 +643,7 @@ user = userInfos()
 main = None
 
 def main():
-    tftpSql = TftpMysql("localhost", 3306, "user", "root", "123456")
+    tftpSql = TftpMysql("localhost", 3306, "user", "root", "xiao404040")
     tftpSql.open()
 
     app = QApplication(sys.argv)

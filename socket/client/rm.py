@@ -4,6 +4,7 @@ import os,json
 # from list_ import do_ls
 
 def do_rm(self, *args):
+    isRmOK = False
     cmd_split = args[0].split()
     filename = cmd_split[1]
     msg_dic={
@@ -17,8 +18,11 @@ def do_rm(self, *args):
     print(data)
     if data == "remove_file_succeed":
         print("删除文件成功")
-     
+        isRmOK = True
     elif data == "remove_file_defeated":
         print("文件删除失败，请检查")
+        isRmOK = False
     elif data == "file_no_exist":
         print("文件不存在")
+        isRmOK = True
+    return isRmOK

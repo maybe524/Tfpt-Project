@@ -44,16 +44,16 @@ class FtpClient:
 		return do_get(self, fileName, pgMemValue)
 
 	def put(self, *args):
-		do_put(self, *args)
+		return do_put(self, *args)
 
 	def mkdir(self, *args):
-		do_mkdir(self, *args)
+		return do_mkdir(self, *args)
 
 	def rename(self, *args):
-		do_rename(self, *args)
+		return do_rename(self, *args)
 
 	def rm(self, *args):
-		do_rm(self, *args)
+		return do_rm(self, *args)
 
 
 # if __name__ == "__main__":
