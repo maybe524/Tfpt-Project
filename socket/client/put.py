@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
+from progress import *
+from multiprocessing import Event,Process
+import socket
 import os
 import json
 import re
@@ -10,8 +13,8 @@ from conf import PATH_
 FILE_PATH = PATH_
 
 
-def do_put(self, *args):
-	cmd_split = args[0].split()
+def __client_put(self, fileName, pgbarChange):
+	cmd_split = fileName.split()
 	filename = cmd_split[1]
 	# data = self.client.recv(1024)
 	# print("recv:>",data.decode())
@@ -123,3 +126,10 @@ def do_put(self, *args):
 					self.client.send("allfile_succee".encode())
 	else:
 		print("文件不存在")
+
+def do_put(self, fileName, pgbarChange):
+	p1 = Process(target = __client_put, args=(self, fileName, pgbarChange))
+	p1.start()
+
+	# p1.join()
+	print('client put is running...')

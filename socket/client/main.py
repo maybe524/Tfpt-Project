@@ -452,10 +452,14 @@ class MyMainWidget(QMainWindow):
             # baseNode = getSelected[0]
             # getChildNode = baseNode.text(0)           
             clientDebug('Select to upload: ', str(getSelected.data()))
-            file_get = "put %s"%str(getSelected.data())
-            print("++++",file_get)
+            file_put = "put %s"%str(getSelected.data())
+            print("++++",file_put)
+            # ftp_client.put(file_put)
             # item = [baseNode.text(0), baseNode.text(1), baseNode.text(2)]
-            # pgbar = self.addDownloadTableWidget(item)
+            item = [str(getSelected.data()), 100, "test"]
+            pgbar = self.addDownloadTableWidget(item)
+
+            doupload(file_put, pgbar)
             # doupload(file_get, pgbar)
 
     def mySelectDownload(self):
@@ -549,7 +553,12 @@ class MyMainWidget(QMainWindow):
             value, ok = QInputDialog.getText(self, 'Rename', 'Edite new name:', QLineEdit.Normal, getChildNode)
             clientDebug(value, ok)
             if ok:
-                baseNode.setText(0, value)
+                filels = "rename %s %s"%(getChildNode, value)
+                rename = ftp_client.rename(filels)
+                if rename == True:
+                    baseNode.setText(0, value)
+                else:
+                    print("修改失败")
 
     def myUpdataOneItems(self, childRoot, childList):
         if not childRoot or not childList:
@@ -624,7 +633,7 @@ user = userInfos()
 main = None
 
 def main():
-    tftpSql = TftpMysql("localhost", 3306, "user", "root", "xiao404040")
+    tftpSql = TftpMysql("localhost", 3306, "user", "root", "123456")
     tftpSql.open()
 
     app = QApplication(sys.argv)
