@@ -127,7 +127,7 @@ def __client_put(self, fileName, pgbarChange):
 	else:
 		print("文件不存在")
 
-def do_put(self, fileName, pgbarChange):
+def do_cput(self, fileName, pgbarChange):
 	p1 = Process(target = __client_put, args=(self, fileName, pgbarChange))
 	p1.start()
 
