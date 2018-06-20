@@ -46,8 +46,8 @@ class FtpClient:
 	def get(self, fileName, pgMemValue):
 		return do_cget(self, fileName, pgMemValue)
 
-	def put(self, *args):
-		return do_cput(self, *args)
+	def put(self, fileName, pgbarChange):
+		return do_cput(self, fileName, pgbarChange)
 
 	def mkdir(self, *args):
 		return do_cmkdir(self, *args)

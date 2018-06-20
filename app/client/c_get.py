@@ -46,7 +46,22 @@ def __client_get(self, fileName, pgMemValue):
 					size = file_all_size - new_size
 				data = self.client.recv(size)
 				new_size += len(data)
-				progres(new_size,file_all_size)
+				# progres(new_size,file_all_size)
+				#--------------------------------------------
+				def progerss(new_size, file_all_size):
+					try:
+						percent = float(new_size) / float(file_all_size)
+						new_percent = percent * 100
+					except ZeroDivisionError:
+						new_percent = 0.01
+					return new_percent		
+				def progerss1():
+					return progerss(new_size, file_all_size)
+				temp = int(progerss1())
+				if pgMemValue.value != temp:
+					pgMemValue.value = temp
+					print('hxw: pgMemValue.value = %d' % pgMemValue.value)				
+				#--------------------------------------------
 				f.write(data)  #写入文件
 			else:
 				print("文件下载成功!")
@@ -66,7 +81,22 @@ def __client_get(self, fileName, pgMemValue):
 					size = file_all_size - native_size
 				data = self.client.recv(size)
 				native_size += len(data)
-				progres(native_size,file_all_size)
+				# progres(native_size,file_all_size)
+				#--------------------------------------------
+				def progerss(new_size, file_all_size):
+					try:
+						percent = float(new_size) / float(file_all_size)
+						new_percent = percent * 100
+					except ZeroDivisionError:
+						new_percent = 0.01
+					return new_percent	
+				def progerss1():
+					return progerss(new_size, file_all_size)
+				temp = int(progerss1())
+				if pgMemValue.value != temp:
+					pgMemValue.value = temp
+					print('hxw: pgMemValue.value = %d' % pgMemValue.value)				
+				#--------------------------------------------				
 				f.write(data)  #写入文件
 			else:
 				print("文件下载成功!")
@@ -112,7 +142,22 @@ def __client_get(self, fileName, pgMemValue):
 						size = file_size - f_size
 					data = self.client.recv(size) #每次接受size文件
 					f_size += len(data)				
-					progres(f_size,file_size)
+					# progres(f_size,file_size)
+				#--------------------------------------------
+				def progerss(f_size, file_size):
+					try:
+						percent = float(f_size) / float(file_size)
+						new_percent = percent * 100
+					except ZeroDivisionError:
+						new_percent = 0.01
+					return new_percent		
+				def progerss1():
+					return progerss(f_size, file_size)
+				temp = int(progerss1())
+				if pgMemValue.value != temp:
+					pgMemValue.value = temp
+					print('hxw: pgMemValue.value = %d' % pgMemValue.value)				
+				#--------------------------------------------					
 					f.write(data)  #写入文件
 				else:
 					f.close()

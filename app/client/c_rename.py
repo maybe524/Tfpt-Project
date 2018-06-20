@@ -17,8 +17,11 @@ def do_crename(self, *args):
 	data = self.client.recv(1024).decode()
 
 	if data == "file_rename_succeed":
-		print("重命名成功")
+		# print("重命名成功")
+		return True
 	elif data == "file_rename_defeated":
-		print("重命名失败，请检查")
+		# print("重命名失败，请检查")
+		return False
 	elif data == "file_name_exist":
-		print("该名字文件以存在！")
+		# print("该名字文件以存在！")
+		return "该名字文件以存在！"
