@@ -1,0 +1,4 @@
+Server:
+    ./app/server/main.py
+Client:
+    ./app/client/main.py
