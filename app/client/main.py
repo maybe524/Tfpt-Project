@@ -178,11 +178,9 @@ class loginWindow(QMainWindow):
         clientDebug('funRegister, textUserName = %s' % textUserName)
         clientDebug('funRegister, textPassWord = %s' % textPassWord)
 
-        if not self.sqlObject:
-            clientDebug('Not sqlObject, register failed!')
-        ret = self.sqlObject.mysqlRigester(textUserName, textPassWord)
+        ret = ftp_client.register(textUserName, textPassWord)
         clientDebug('Register ret = %d' % (ret))
-        if ret:
+        if not ret:
             clientDebug('Register error, ret = %d' % ret)
         else:
             self.userInfo.setUserName(textUserName, textPassWord)
